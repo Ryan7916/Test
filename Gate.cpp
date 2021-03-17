@@ -54,6 +54,56 @@ boost::property_tree::ptree Gate::GetJson()
 	return pt;
 }
 
+std::string Gate::GetCSVRow()
+{
+    //id,table,type,probed,inputs,outputs
+    std::string result;
+    
+    result.append(m_name);
+    result.append(",");
+    
+    result.append(m_type->GetTruthTableName());
+    result.append(",");
+    
+    result.append(m_type->GetType());
+    result.append(",");
+    
+    if(m_probed)
+        result.append("true,");
+    else
+        result.append("false,");
+    
+    result.append("\"");
+    
+    int index = 0;
+    for (auto& [k,v] : m_inGates)
+    {
+        if(index > 0)
+            result.append(",");
+        
+        result.append(v->GetName());
+        
+        index += 1;
+    }
+    result.append("\",");
+    
+    result.append("\"");
+    index = 0;
+    for (auto& v : m_outGates)
+    {
+        if(index > 0)
+            result.append(",");
+        
+        result.append(v->GetName());
+        
+        index += 1;
+    }
+    
+    result.append("\"");
+    
+    return result;
+}
+
 int Gate::GetTransitionOutput() const
 {
 	std::vector<int> inputs;

@@ -21,6 +21,7 @@ public:
 	int GetTransitionTime(int time) const;
 	void UndoProbe();
 	boost::property_tree::ptree GetJson();
+    std::string GetCSVRow();
 private:
 	const GateType* m_type{};
 	std::string m_name;

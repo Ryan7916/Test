@@ -86,3 +86,15 @@ boost::property_tree::ptree Circuit::GetJson()
 	ret.add_child("gates", pt);
 	return ret;
 }
+
+std::string Circuit::GetGatesList()
+{
+    std::string result;
+    for (auto& [k, v] : m_gates)
+    {
+        result.append(v.GetCSVRow());
+        result.append("\n");
+    }
+    
+    return result;
+}

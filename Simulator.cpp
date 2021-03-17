@@ -29,7 +29,9 @@ int main(int argc, char** argv)
         
     simulation->Run();
     if (json)
+    {
         simulation->UndoProbeAllGates();
+	}
     if (argc >= 3 && "json" == std::string(argv[2]))
     {
         boost::property_tree::ptree simResult = simulation->GetJson();
@@ -37,6 +39,23 @@ int main(int argc, char** argv)
         output << "onJsonp(";
         boost::property_tree::write_json(output, simResult);
         output << ");\n";
+    }
+    
+    if (argc >= 3 && "csv" == std::string(argv[2]))
+    {
+        std::ofstream gatesoutput("gates.csv", std::ios::out);
+        gatesoutput << "id,table,type,probed,inputs,outputs\n";
+        gatesoutput << simulation->GetGates();
+        gatesoutput.close();
+        
+        std::ofstream tracesoutput("traces.csv", std::ios::out);
+        tracesoutput << "time,gate,output\n";
+        tracesoutput << simulation->GetTraces();
+        tracesoutput.close();
+        
+        std::ofstream layoutoutput("layout", std::ios::out);
+        layoutoutput << simulation->GetLayout();
+        layoutoutput.close();
     }
     simulation->PrintProbes(std::cout);
 }

@@ -34,6 +34,21 @@ boost::property_tree::ptree Probe::GetJson()
 	return children;
 }
 
+std::string Probe::GetTrace()
+{
+    std::string result;
+    
+    result.append(std::to_string(time));
+    result.append(",");
+    
+    result.append(gateName);
+    result.append(",");
+    
+    result.append(std::to_string(newValue));
+    
+    return result;
+}
+
 
 void Simulation::AddTransition(std::string gateName, int outputValue, int outputTime)
 {
@@ -62,12 +77,14 @@ std::unique_ptr<Simulation> Simulation::FromFile(std::ifstream& is)
 			for (size_t i = 2; i < command.size(); ++i)
 				outputs.emplace_back(std::stoi(command[i]));
 			circut->AddTruthTable(command[1], outputs);
+			continue;
 		}
 		else if (command[0] == "type")
 		{
 			if (command.size() != 4)
 				throw std::runtime_error("Invalid number of arguments for gate type");
 			circut->AddGateType(command[1], command[2], std::stoi(command[3]));
+			continue;
 		}
 		else if (command[0] == "gate")
 		{
@@ -75,18 +92,21 @@ std::unique_ptr<Simulation> Simulation::FromFile(std::ifstream& is)
 			for (size_t i = 3; i < command.size(); ++i)
 				inputs.emplace_back(command[i]);
 			circut->AddGate(command[1], command[2], inputs);
+			continue;
 		}
 		else if (command[0] == "probe")
 		{
 			if (command.size() != 2)
 				throw std::runtime_error("Invalid number of arguments for probe type");
 			circut->AddProbe(command[1]);
+			continue;
 		}
 		else if (command[0] == "flip")
 		{
 			if (command.size() != 4)
 				throw std::runtime_error("Invalid number of arguments for flip type");
 			simulation->AddTransition(command[1], std::stoi(command[2]), std::stoi(command[3]));
+			continue;
 		}
 		else if (command[0] == "done")
 			break;
@@ -170,6 +190,28 @@ boost::property_tree::ptree Simulation::GetJson()
 	pt.add_child("trace", probes);
 	pt.add("layout", m_layout);
 	return pt;
+}
+
+std::string Simulation::GetGates()
+{
+    return m_circuit->GetGatesList();
+}
+
+std::string Simulation::GetTraces()
+{
+    std::string result;
+    for (auto& p : m_probes)
+    {
+        result.append(p.GetTrace());
+        result.append("\n");
+    }
+    
+    return result;
+}
+
+std::string Simulation::GetLayout()
+{
+    return m_layout;
 }
 
 void Simulation::PrintProbes(std::ostream& os)

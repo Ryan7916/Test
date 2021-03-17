@@ -32,6 +32,7 @@ struct Probe
 		return time < other.time;
 	}
 	boost::property_tree::ptree GetJson();
+    std::string GetTrace();
 	int time{};
 	std::string gateName;
 	int newValue{};
@@ -51,6 +52,9 @@ public:
 	void UndoProbeAllGates();
 	boost::property_tree::ptree GetJson();
 	void PrintProbes(std::ostream& os);
+    std::string GetGates();
+    std::string GetTraces();
+    std::string GetLayout();
 private:
 	std::unique_ptr<Circuit> m_circuit;
 	std::string m_layout;
