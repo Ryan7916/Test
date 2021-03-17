@@ -41,6 +41,24 @@ public:
     size_t len() const noexcept { return m_queue.size(); }
     void append(const T& item) { m_queue.emplace_back(item); m_minIndex = std::nullopt; }
     
+    void appendAndFastFindMin(const T& item)
+    {
+        if (0 == m_queue.size())
+        {
+            m_queue.emplace_back(item);
+            m_minIndex = 0;
+            return;
+        }
+        
+        auto min = m_queue[m_minIndex.value()];
+        m_queue.emplace_back(item);
+        
+        if (item < min)
+        {
+            m_minIndex = m_queue.size() - 1;
+        }
+    }
+    
 private:
     std::vector<T> m_queue;
     std::optional<int> m_minIndex{};

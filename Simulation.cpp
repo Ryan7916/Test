@@ -129,13 +129,13 @@ int Simulation::Step()
 		transitions.emplace_back(*transition);
 	}
 
-	for (const auto transition : transitions)
+	for (const auto &transition : transitions)
 	{
 		for (auto* gate : transition.gate->GetOutGates())
 		{
 			auto output = gate->GetTransitionOutput();
 			auto time = gate->GetTransitionTime(stepTime);
-			m_queue.append(Transition(gate, output, time));
+			m_queue.appendAndFastFindMin(Transition(gate, output, time));
 		}
 	}
 	return stepTime;
